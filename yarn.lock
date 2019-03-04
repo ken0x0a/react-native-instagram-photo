@@ -647,7 +647,17 @@
     pouchdb-collections "^1.0.1"
     tiny-queue "^0.2.1"
 
-"@types/fbemitter@^2.0.32":
+"@types/expo@32.0.3":
+  version "32.0.3"
+  resolved "https://registry.yarnpkg.com/@types/expo/-/expo-32.0.3.tgz#c5e3cc8cb1b182ccd46ca2330068f10f99ffcf86"
+  integrity sha512-RHzJk/WBIIdwvQj8Mqvm4MVK51TLGhDwe+wYqwj/47BpBUiyloJtuZTlzK7LhLwE14AAITpuxfDBKkGSyR/3ZQ==
+  dependencies:
+    "@types/fbemitter" "*"
+    "@types/react" "*"
+    "@types/react-native" "*"
+    react-native-maps "*"
+
+"@types/fbemitter@*", "@types/fbemitter@^2.0.32":
   version "2.0.32"
   resolved "https://registry.yarnpkg.com/@types/fbemitter/-/fbemitter-2.0.32.tgz#8ed204da0f54e9c8eaec31b1eec91e25132d082c"
   integrity sha1-jtIE2g9U6cjq7DGx7skeJRMtCCw=
@@ -686,7 +696,7 @@
   dependencies:
     react-native-elements "*"
 
-"@types/react-native@0.57.38":
+"@types/react-native@*", "@types/react-native@0.57.38":
   version "0.57.38"
   resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.57.38.tgz#2ff6ed1a7cc207afbfd87bf496513d96931d1446"
   integrity sha512-bmY2ad/vQgP0HMT7Q7EQzirDBt5ibp+kBHclTnY7/i5MrdqE1oY+3b9NkDg3ohXlumr7p5stAG6I55nhfeUV6Q==
@@ -5547,6 +5557,11 @@ react-native-gesture-handler@~1.0.14:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
     prop-types "^15.5.10"
+
+react-native-maps@*:
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.23.0.tgz#edbfdcad0e42190627eb1c8067eaba5965c8f81e"
+  integrity sha512-qxOIQGsDtQXQlSJdXMW1wg8pvLaVYdbiIolB7tZTTgTGgIA/hDxXwZbQZ08c4KDD6/VTk8krfd1APaHkqvh6og==
 
 react-native-maps@expo/react-native-maps#v0.22.1-exp.0:
   version "0.22.1"

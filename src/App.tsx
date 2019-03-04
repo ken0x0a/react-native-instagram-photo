@@ -1,6 +1,6 @@
+import { SplashScreen } from 'expo';
 import * as React from 'react';
 import { StyleSheet, View, ScrollView, Animated } from 'react-native';
-
 import { Provider } from './context';
 import { Measurement } from './Measurement-type';
 import Photo from './Photo';
@@ -82,6 +82,9 @@ export default class App extends React.Component<any, State> {
     this.state = {
       isDragging: false
     };
+  }
+  componentDidMount() {
+    SplashScreen.hide();
   }
 
   onGestureStart = (selectedPhoto_: SelectedPhotoType) => {

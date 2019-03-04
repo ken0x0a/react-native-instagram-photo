@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { View, Animated, PanResponder, Easing, findNodeHandle } from 'react-native';
+import { View, Animated, PanResponder, Easing, findNodeHandle, PanResponderInstance } from 'react-native';
 import { ListItem, Avatar } from 'react-native-elements';
 import PropTypes from 'prop-types';
 const FlexImage = require('react-native-flex-image').default;
@@ -42,11 +42,14 @@ interface Props extends GestureContext {
   onGestureRelease: () => void;
 }
 
+interface PhotoComponentState {
+  // opacity: number;
+}
 @withContext
-export default class PhotoComponent extends React.Component<Props, any> {
+export default class PhotoComponent extends React.Component<Props, PhotoComponentState> {
   _parent?: object;
   _photoComponent?: object;
-  _gestureHandler?: object;
+  _gestureHandler!: PanResponderInstance;
   _initialTouches?: object[];
   _selectedPhotoMeasurement?: Measurement;
   _gestureInProgress?: string;
@@ -56,6 +59,9 @@ export default class PhotoComponent extends React.Component<Props, any> {
   constructor(props: Props) {
     super(props);
     // autobind(this);
+    this.state = {
+      // opacity: 1
+    };
 
     this._startGesture = this._startGesture.bind(this);
     this._onGestureMove = this._onGestureMove.bind(this);
@@ -69,6 +75,7 @@ export default class PhotoComponent extends React.Component<Props, any> {
 
   render() {
     const { data } = this.props;
+    // const { opacity } = this.state;
 
     return (
       <View ref={parentNode => (this._parent = parentNode)}>
@@ -85,6 +92,7 @@ export default class PhotoComponent extends React.Component<Props, any> {
         <Animated.View
           ref={node => (this._photoComponent = node)}
           {...this._gestureHandler.panHandlers}
+          // style={{ opacity }}
           style={{ opacity: this._opacity }}
         >
           <FlexImage source={{ uri: data.photo.uri }} />
@@ -144,10 +152,13 @@ export default class PhotoComponent extends React.Component<Props, any> {
       y: selectedPhotoMeasurement.y - getScrollPosition()
     });
 
-    Animated.timing(this._opacity, {
-      toValue: 0,
-      duration: 200
-    }).start();
+    this._opacity.setValue(0);
+
+    // this.setState({opacity:0})
+    // Animated.timing(this._opacity, {
+    //   toValue: 0,
+    //   duration: 200
+    // }).start();
   }
 
   _onGestureMove(event: Event, gestureState: GestureState) {
