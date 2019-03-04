@@ -2,36 +2,35 @@
   "name": "react-native-instagram-photo",
   "version": "0.1.0",
   "private": true,
-  "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-eslint": "^7.2.3",
-    "babel-jest": "^20.0.3",
-    "eslint": "^4.4.1",
-    "eslint-plugin-babel": "^4.1.2",
-    "eslint-plugin-flowtype": "^2.35.0",
-    "eslint-plugin-react": "^7.2.0",
-    "flow-bin": "0.47.0",
-    "jest-expo": "^19.0.5",
-    "react-native-scripts": "1.1.0",
-    "react-test-renderer": "16.0.0-alpha.12"
-  },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "react-native-scripts start",
-    "eject": "react-native-scripts eject",
-    "android": "react-native-scripts android",
-    "ios": "react-native-scripts ios",
+    "start": "expo start",
+    "eject": "expo eject",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
     "test": "node node_modules/jest/bin/jest.js --watch"
-  },
-  "jest": {
-    "preset": "jest-expo"
   },
   "dependencies": {
     "class-autobind": "^0.1.4",
-    "expo": "^19.0.0",
-    "react": "16.0.0-alpha.12",
-    "react-native": "^0.46.1",
-    "react-native-elements": "^0.15.0",
-    "react-native-flex-image": "^1.1.0"
+    "expo": "32.0.6",
+    "react": "16.5.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.1.tar.gz",
+    "react-native-elements": "^1.1.0",
+    "react-native-flex-image": "1.2.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "7.3.4",
+    "@types/react": "16.8.6",
+    "@types/react-native": "0.57.38",
+    "@types/react-native-elements": "0.18.0",
+    "jest-expo": "32.0.0",
+    "prettier": "1.16.4",
+    "react-test-renderer": "16.0.0",
+    "tslint": "^5.13.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.3.3"
+  },
+  "jest": {
+    "preset": "jest-expo"
   }
 }

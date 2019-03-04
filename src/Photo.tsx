@@ -1,76 +1,66 @@
-// @flow
-/* global requestAnimationFrame */
+import * as React from 'react';
 
-import React, {Component} from 'react';
+import { View, Animated, PanResponder, Easing, findNodeHandle } from 'react-native';
+import { ListItem, Avatar } from 'react-native-elements';
 import PropTypes from 'prop-types';
-import autobind from 'class-autobind';
-import ReactNative, {View, Animated, PanResponder, Easing} from 'react-native';
-import {ListItem} from 'react-native-elements';
-import FlexImage from 'react-native-flex-image';
+const FlexImage = require('react-native-flex-image').default;
 
 import getDistance from './helpers/getDistance';
 import getScale from './helpers/getScale';
 import measureNode from './helpers/measureNode';
 
-import type {Measurement} from './Measurement-type';
-import type {Touch} from './Touch-type';
+import { GestureContext, withContext } from './context';
+import { Measurement } from './Measurement-type';
+import { Touch } from './Touch-type';
 
 const RESTORE_ANIMATION_DURATION = 200;
 
-type Event = {
+interface Event {
   nativeEvent: {
-    touches: Array<Touch>;
+    touches: Touch[];
   };
-};
+}
 
-type GestureState = {
+interface GestureState {
   stateID: string;
   dx: number;
   dy: number;
-};
+}
 
-type Photo = {
+interface Photo {
   name: string;
   avatar: {
     uri: string;
   };
-  photo: {uri: string};
-};
+  photo: { uri: string };
+}
 
-type Props = {
+interface Props extends GestureContext {
   data: Photo;
   isDragging: boolean;
-  onGestureStart: ({photoURI: string; measurement: Measurement}) => void;
+  onGestureStart: (args: { photoURI: string; measurement: Measurement }) => void;
   onGestureRelease: () => void;
-};
+}
 
-type Context = {
-  gesturePosition: Animated.ValueXY;
-  scaleValue: Animated.Value;
-  getScrollPosition: () => number;
-};
-
-export default class PhotoComponent extends Component {
-  props: Props;
-  context: Context;
-  _parent: ?Object;
-  _photoComponent: ?Object;
-  _gestureHandler: Object;
-  _initialTouches: Array<Object>;
-  _selectedPhotoMeasurement: Measurement;
-  _gestureInProgress: ?string;
+@withContext
+export default class PhotoComponent extends React.Component<Props, any> {
+  _parent?: object;
+  _photoComponent?: object;
+  _gestureHandler?: object;
+  _initialTouches?: object[];
+  _selectedPhotoMeasurement?: Measurement;
+  _gestureInProgress?: string;
 
   _opacity: Animated.Value;
 
-  static contextTypes = {
-    gesturePosition: PropTypes.object,
-    scaleValue: PropTypes.object,
-    getScrollPosition: PropTypes.func,
-  };
+  constructor(props: Props) {
+    super(props);
+    // autobind(this);
 
-  constructor() {
-    super(...arguments);
-    autobind(this);
+    this._startGesture = this._startGesture.bind(this);
+    this._onGestureMove = this._onGestureMove.bind(this);
+    this._onGestureRelease = this._onGestureRelease.bind(this);
+    this._onGestureRelease = this._onGestureRelease.bind(this);
 
     this._generatePanHandlers();
     this._initialTouches = [];
@@ -78,25 +68,26 @@ export default class PhotoComponent extends Component {
   }
 
   render() {
-    let {data} = this.props;
+    const { data } = this.props;
 
     return (
-      <View ref={(parentNode) => (this._parent = parentNode)}>
+      <View ref={parentNode => (this._parent = parentNode)}>
         <View>
           <ListItem
-            roundAvatar
-            avatar={{uri: data.avatar.uri}}
+            // roundAvatar
+            leftAvatar={{ source: { uri: data.avatar.uri }, rounded: true }}
+            // avatar={{ uri: data.avatar.uri }}
             title={`${data.name}`}
             subtitle="example of subtitle"
-            rightIcon={{name: 'more-vert'}}
+            rightIcon={{ name: 'more-vert' }}
           />
         </View>
         <Animated.View
-          ref={(node) => (this._photoComponent = node)}
+          ref={node => (this._photoComponent = node)}
           {...this._gestureHandler.panHandlers}
-          style={{opacity: this._opacity}}
+          style={{ opacity: this._opacity }}
         >
-          <FlexImage source={{uri: data.photo.uri}} />
+          <FlexImage source={{ uri: data.photo.uri }} />
         </Animated.View>
       </View>
     );
@@ -120,7 +111,7 @@ export default class PhotoComponent extends Component {
       },
       onPanResponderTerminate: (event, gestureState) => {
         return this._onGestureRelease(event, gestureState);
-      },
+      }
     });
   }
 
@@ -131,37 +122,36 @@ export default class PhotoComponent extends Component {
     }
 
     this._gestureInProgress = gestureState.stateID;
-    let {data, onGestureStart} = this.props;
-    let {gesturePosition, getScrollPosition} = this.context;
-    let {touches} = event.nativeEvent;
+    const { data, onGestureStart, gesturePosition, getScrollPosition } = this.props;
+    const { touches } = event.nativeEvent;
 
     this._initialTouches = touches;
 
-    let selectedPhotoMeasurement = await this._measureSelectedPhoto();
+    const selectedPhotoMeasurement = await this._measureSelectedPhoto();
     this._selectedPhotoMeasurement = selectedPhotoMeasurement;
     onGestureStart({
       photoURI: data.photo.uri,
-      measurement: selectedPhotoMeasurement,
+      measurement: selectedPhotoMeasurement
     });
 
     gesturePosition.setValue({
       x: 0,
-      y: 0,
+      y: 0
     });
 
     gesturePosition.setOffset({
       x: 0,
-      y: selectedPhotoMeasurement.y - getScrollPosition(),
+      y: selectedPhotoMeasurement.y - getScrollPosition()
     });
 
     Animated.timing(this._opacity, {
       toValue: 0,
-      duration: 200,
+      duration: 200
     }).start();
   }
 
   _onGestureMove(event: Event, gestureState: GestureState) {
-    let {touches} = event.nativeEvent;
+    let { touches } = event.nativeEvent;
     if (!this._gestureInProgress) {
       return;
     }
@@ -172,8 +162,8 @@ export default class PhotoComponent extends Component {
     }
 
     // for moving photo around
-    let {gesturePosition, scaleValue} = this.context;
-    let {dx, dy} = gestureState;
+    let { gesturePosition, scaleValue } = this.props;
+    let { dx, dy } = gestureState;
     gesturePosition.x.setValue(dx);
     gesturePosition.y.setValue(dy);
 
@@ -184,43 +174,40 @@ export default class PhotoComponent extends Component {
     scaleValue.setValue(newScale);
   }
 
-  _onGestureRelease(event, gestureState: GestureState) {
+  _onGestureRelease(event: any, gestureState: GestureState) {
     if (this._gestureInProgress !== gestureState.stateID) {
       return;
     }
 
     this._gestureInProgress = null;
     this._initialTouches = [];
-    let {onGestureRelease} = this.props;
-    let {gesturePosition, scaleValue, getScrollPosition} = this.context;
+    let { onGestureRelease } = this.props;
+    let { gesturePosition, scaleValue, getScrollPosition } = this.props;
 
     // set to initial position and scale
     Animated.parallel([
       Animated.timing(gesturePosition.x, {
         toValue: 0,
         duration: RESTORE_ANIMATION_DURATION,
-        easing: Easing.ease,
+        easing: Easing.ease
         // useNativeDriver: true,
       }),
       Animated.timing(gesturePosition.y, {
         toValue: 0,
         duration: RESTORE_ANIMATION_DURATION,
-        easing: Easing.ease,
+        easing: Easing.ease
         // useNativeDriver: true,
       }),
       Animated.timing(scaleValue, {
         toValue: 1,
         duration: RESTORE_ANIMATION_DURATION,
-        easing: Easing.ease,
+        easing: Easing.ease
         // useNativeDriver: true,
-      }),
+      })
     ]).start(() => {
       gesturePosition.setOffset({
         x: 0,
-        y:
-          (this._selectedPhotoMeasurement &&
-            this._selectedPhotoMeasurement.y) ||
-          0 - getScrollPosition(),
+        y: (this._selectedPhotoMeasurement && this._selectedPhotoMeasurement.y) || 0 - getScrollPosition()
       });
 
       this._opacity.setValue(1);
@@ -232,19 +219,16 @@ export default class PhotoComponent extends Component {
   }
 
   async _measureSelectedPhoto() {
-    let parent = ReactNative.findNodeHandle(this._parent);
-    let photoComponent = ReactNative.findNodeHandle(this._photoComponent);
+    let parent = findNodeHandle(this._parent);
+    let photoComponent = findNodeHandle(this._photoComponent);
 
-    let [parentMeasurement, photoMeasurement] = await Promise.all([
-      measureNode(parent),
-      measureNode(photoComponent),
-    ]);
+    let [parentMeasurement, photoMeasurement] = await Promise.all([measureNode(parent), measureNode(photoComponent)]);
 
     return {
       x: photoMeasurement.x,
       y: parentMeasurement.y + photoMeasurement.y,
       w: photoMeasurement.w,
-      h: photoMeasurement.h,
+      h: photoMeasurement.h
     };
   }
 }
