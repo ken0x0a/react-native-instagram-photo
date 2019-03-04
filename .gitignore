@@ -1,3 +1,6 @@
 node_modules/
 .expo/
 npm-debug.*
+
+/src/@types/*
+!/src/@types/declaration.d.ts

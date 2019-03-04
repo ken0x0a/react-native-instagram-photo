@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { View, Animated, PanResponder, Easing, findNodeHandle, PanResponderInstance } from 'react-native';
 import { ListItem, Avatar } from 'react-native-elements';
-import PropTypes from 'prop-types';
 const FlexImage = require('react-native-flex-image').default;
 
 import getDistance from './helpers/getDistance';

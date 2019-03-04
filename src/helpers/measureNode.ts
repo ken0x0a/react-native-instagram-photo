@@ -2,6 +2,7 @@ import { UIManager } from 'react-native';
 
 export default function measureNode(node: number) {
   return new Promise((resolve, reject) => {
+    // UIManager.measureLayout(
     UIManager.measureLayoutRelativeToParent(
       node,
       e => reject(e),
